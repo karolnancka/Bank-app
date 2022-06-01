@@ -55,4 +55,14 @@ public class Bank {
     public void setProfitPLN(double profitPLN) {
         this.profitPLN = profitPLN;
     }
+
+    @Override
+    public String toString() {
+        return "Bank{" +
+                "id=" + id +
+                ", profitUSD=" + profitUSD +
+                ", profitEUR=" + profitEUR +
+                ", profitPLN=" + profitPLN +
+                '}';
+    }
 }

@@ -74,4 +74,16 @@ public class Account {
     public void setBalancePLN(double balancePLN) {
         this.balancePLN = balancePLN;
     }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", number=" + number +
+                ", user=" + user +
+                ", balanceUSD=" + balanceUSD +
+                ", balanceEUR=" + balanceEUR +
+                ", balancePLN=" + balancePLN +
+                '}';
+    }
 }

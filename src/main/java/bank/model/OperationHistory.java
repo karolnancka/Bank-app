@@ -124,4 +124,20 @@ public class OperationHistory {
     public void setCommissionPLN(double commissionPLN) {
         this.commissionPLN = commissionPLN;
     }
+
+    @Override
+    public String toString() {
+        return "OperationHistory{" +
+                "id=" + id +
+                ", operationType='" + operationType + '\'' +
+                ", fromAccount=" + fromAccount +
+                ", toAccount=" + toAccount +
+                ", amount=" + amount +
+                ", currencyFrom='" + currencyFrom + '\'' +
+                ", currencyTo='" + currencyTo + '\'' +
+                ", commissionUSD=" + commissionUSD +
+                ", commissionEUR=" + commissionEUR +
+                ", commissionPLN=" + commissionPLN +
+                '}';
+    }
 }
