@@ -1,7 +1,6 @@
 package bank.model;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 
@@ -10,12 +9,13 @@ public class OperationHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @NotNull
-    private String operationType;
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "operation_Type")
+    private Category operationType;
+    @ManyToOne
     @JoinColumn(name = "from_account")
     private Account fromAccount;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "to_account")
     private Account toAccount;
     @NotNull(message = "Operation amount can not be 0")
@@ -28,7 +28,7 @@ public class OperationHistory {
     private double commissionEUR;
     private double commissionPLN;
 
-    public OperationHistory(long id, String operationType, Account fromAccount, Account toAccount, double amount, String currencyFrom, String currencyTo, double commissionUSD, double commissionEUR, double commissionPLN) {
+    public OperationHistory(long id, Category operationType, Account fromAccount, Account toAccount, double amount, String currencyFrom, String currencyTo, double commissionUSD, double commissionEUR, double commissionPLN) {
         this.id = id;
         this.operationType = operationType;
         this.fromAccount = fromAccount;
@@ -53,11 +53,11 @@ public class OperationHistory {
         this.id = id;
     }
 
-    public String getOperationType() {
+    public Category getOperationType() {
         return operationType;
     }
 
-    public void setOperationType(String operationType) {
+    public void setOperationType(Category operationType) {
         this.operationType = operationType;
     }
 

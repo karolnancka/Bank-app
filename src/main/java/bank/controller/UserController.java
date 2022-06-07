@@ -62,7 +62,7 @@ public class UserController {
     }
 
     @PostMapping("/edit")
-    public String editBook(@Valid User user, BindingResult result) {
+    public String editUser(@Valid User user, BindingResult result) {
         if (result.hasErrors()) {
             return "users/edit";
         }
