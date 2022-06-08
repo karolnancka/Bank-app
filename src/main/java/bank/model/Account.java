@@ -86,4 +86,5 @@ public class Account {
                 ", balancePLN=" + balancePLN +
                 '}';
     }
+
 }

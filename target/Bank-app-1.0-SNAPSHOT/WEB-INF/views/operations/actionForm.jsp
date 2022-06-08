@@ -16,18 +16,24 @@
         </select>
     </div>
     <div>
-        <label for="fromAccount">Account From</label>
-        <form:input path="fromAccount" id="fromAccount" type="text"/>
-        <form:errors path="fromAccount"/>
+        <label>Account From</label>
+        <select name="fromAccount" >
+            <c:forEach items="${accounts}" var="account">
+                <option value="${account}">${account.user.firstName}</option>
+            </c:forEach>
+        </select>
     </div>
     <div>
-        <label for="toAccount">Account To</label>
-        <form:input path="toAccount" id="toAccount" type="text"/>
-        <form:errors path="toAccount"/>
+        <label>Account To</label>
+        <select name="toAccount" >
+            <c:forEach items="${accounts}" var="account">
+                <option value="${account}">${account.user.firstName}</option>
+            </c:forEach>
+        </select>
     </div>
     <div>
         <label for="amount">Amount</label>
-        <form:input path="amount" id="amount" type="text"/>
+        <form:input path="amount" id="amount" type="number"/>
         <form:errors path="amount"/>
     </div>
     <div>

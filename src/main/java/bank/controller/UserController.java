@@ -1,7 +1,9 @@
 package bank.controller;
 
 
+import bank.model.Account;
 import bank.model.User;
+import bank.repository.AccountRepository;
 import bank.repository.UserRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,9 +23,11 @@ import java.util.List;
 public class UserController {
 
     private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, AccountRepository accountRepository) {
         this.userRepository = userRepository;
+        this.accountRepository = accountRepository;
     }
 
     @GetMapping("/all")
@@ -41,10 +45,19 @@ public class UserController {
 
     @PostMapping("/register")
     public String addUser(@Valid final User user, final BindingResult validationResult) {
+        Account account = new Account();
+        long number = (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
+        account.setNumber(number);
+        account.setUser(user);
+        account.setBalanceUSD(0);
+        account.setBalanceEUR(0);
+        account.setBalancePLN(0);
         if (validationResult.hasErrors()) {
             return "users/register";
         }
+
         userRepository.save(user);
+        accountRepository.save(account);
         return "redirect:all";
     }
 

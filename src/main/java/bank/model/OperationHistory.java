@@ -21,14 +21,16 @@ public class OperationHistory {
     @NotNull(message = "Operation amount can not be 0")
     private double amount;
     @NotNull
-    private String currencyFrom;
+    @ManyToOne
+    private Currency currencyFrom;
     @NotNull
-    private String currencyTo;
+    @ManyToOne
+    private Currency currencyTo;
     private double commissionUSD;
     private double commissionEUR;
     private double commissionPLN;
 
-    public OperationHistory(long id, Category operationType, Account fromAccount, Account toAccount, double amount, String currencyFrom, String currencyTo, double commissionUSD, double commissionEUR, double commissionPLN) {
+    public OperationHistory(long id, Category operationType, Account fromAccount, Account toAccount, double amount, @NotNull Currency currencyFrom, @NotNull Currency currencyTo, double commissionUSD, double commissionEUR, double commissionPLN) {
         this.id = id;
         this.operationType = operationType;
         this.fromAccount = fromAccount;
@@ -85,19 +87,19 @@ public class OperationHistory {
         this.amount = amount;
     }
 
-    public String getCurrencyFrom() {
+    public @NotNull Currency getCurrencyFrom() {
         return currencyFrom;
     }
 
-    public void setCurrencyFrom(String currencyFrom) {
+    public void setCurrencyFrom(@NotNull Currency currencyFrom) {
         this.currencyFrom = currencyFrom;
     }
 
-    public String getCurrencyTo() {
+    public @NotNull Currency getCurrencyTo() {
         return currencyTo;
     }
 
-    public void setCurrencyTo(String currencyTo) {
+    public void setCurrencyTo(@NotNull Currency currencyTo) {
         this.currencyTo = currencyTo;
     }
 

@@ -1,7 +1,9 @@
 package bank.controller;
 
+import bank.model.Account;
 import bank.model.Category;
 import bank.model.OperationHistory;
+import bank.repository.AccountRepository;
 import bank.repository.CategoryRepository;
 import bank.repository.OperationHistoryRepository;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/operations")
@@ -20,11 +23,13 @@ public class OperationHistoryController {
 
     private final OperationHistoryRepository operationHistoryRepository;
     private final CategoryRepository categoryRepository;
+    private final AccountRepository accountRepository;
 
-    public OperationHistoryController(OperationHistoryRepository operationHistoryRepository, CategoryRepository categoryRepository) {
+    public OperationHistoryController(OperationHistoryRepository operationHistoryRepository, CategoryRepository categoryRepository, AccountRepository accountRepository) {
         this.operationHistoryRepository = operationHistoryRepository;
 
         this.categoryRepository = categoryRepository;
+        this.accountRepository = accountRepository;
     }
 
     @GetMapping("/all")
@@ -36,9 +41,15 @@ public class OperationHistoryController {
 
     @GetMapping("/operation")
     public String getTransactionForm(Model model) {
-        model.addAttribute("operation", new OperationHistory());
+
         List<Category> categories = categoryRepository.findAll();
         model.addAttribute("categories", categories);
+
+        List<Account> accounts = accountRepository.findAll();
+        model.addAttribute("accounts", accounts);
+
+        model.addAttribute("operation", new OperationHistory());
+
         return "operations/actionForm";
     }
 
