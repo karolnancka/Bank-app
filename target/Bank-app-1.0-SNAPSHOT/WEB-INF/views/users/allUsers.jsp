@@ -11,6 +11,7 @@
         <th>First Name</th>
         <th>Last Name</th>
         <th>Email</th>
+        <th>Account</th>
         </thead>
         <tbody>
         <c:forEach items="${users}" var="user">
@@ -19,6 +20,7 @@
                 <td><c:out value="${user.firstName}"/></td>
                 <td><c:out value="${user.lastName}"/></td>
                 <td><c:out value="${user.email}"/></td>
+                <td><c:out value="${user.account.number}"/></td>
             </tr>
         </c:forEach>
         </tbody>

@@ -1,9 +1,7 @@
 package bank.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class User {
@@ -14,16 +12,20 @@ public class User {
     private String lastName;
     private String email;
     private String password;
+    @OneToOne
+    private Account account;
 
-    public User(long id, String firstName, String lastName, String email, String password) {
+    public User(long id, String firstName, String lastName, String email, String password, Account account) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.account = account;
     }
 
     public User() {
+
     }
 
     public long getId() {
@@ -66,6 +68,14 @@ public class User {
         this.password = password;
     }
 
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -74,6 +84,7 @@ public class User {
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", account=" + account +
                 '}';
     }
 }

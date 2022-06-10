@@ -20,6 +20,7 @@
         <td><c:out value="${user.firstName}"/></td>
         <td><c:out value="${user.lastName}"/></td>
         <td><c:out value="${user.email}"/></td>
+        <td><c:out value="${user.account.number}"/></td>
     </tr>
 
     </tbody>

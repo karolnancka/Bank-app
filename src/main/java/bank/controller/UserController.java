@@ -47,6 +47,7 @@ public class UserController {
     public String addUser(@Valid final User user, final BindingResult validationResult) {
         Account account = new Account();
         long number = (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
+        userRepository.save(user);
         account.setNumber(number);
         account.setUser(user);
         account.setBalanceUSD(0);
@@ -56,8 +57,9 @@ public class UserController {
             return "users/registerUser";
         }
 
-        userRepository.save(user);
         accountRepository.save(account);
+        user.setAccount(account);
+        userRepository.save(user);
         return "redirect:all";
     }
 
@@ -88,6 +90,7 @@ public class UserController {
         List<User> users = userRepository.findAll();
         model.addAttribute("users", users);
         userRepository.deleteById(id);
+
         return "users/allUsers";
     }
 }

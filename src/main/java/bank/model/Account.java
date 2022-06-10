@@ -9,7 +9,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private long number;
-    @OneToOne(optional = false)
+    @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
     private double balanceUSD;
