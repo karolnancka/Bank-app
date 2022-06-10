@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Controller
@@ -55,28 +56,32 @@ public class OperationHistoryController {
     }
 
     @PostMapping("/operation")
+    @Transactional
     public String makeTransaction(OperationHistory operation, final BindingResult validationResult) {
         if (validationResult.hasErrors()) {
            return "operations/actionForm";
         }
-        Account accountTo = operation.getToAccount();
+        Account accountTo = accountRepository.getOne(operation.getToAccount().getId());
         List<Account> accounts = accountRepository.findAll();
         Double value = operation.getAmount();
         Category operationType = operation.getOperationType();
-        String currency = operation.getCurrencyFrom().getCurrency();
+        int currency = (int) operation.getCurrencyFrom().getId();
         if (operation.getOperationType().getId() == 2){
             switch (currency){
-                case "USD" :
-                    accountTo.setBalanceUSD(value);
+                case 1 :
+                    double currentUSD = accountTo.getBalanceUSD();
+                    accountTo.setBalanceUSD(value + currentUSD);
                     break;
-                case "EUR" :
-                    accountTo.setBalanceEUR(value);
+                case 2 :
+                    double currentEUR = accountTo.getBalanceEUR();
+                    accountTo.setBalanceEUR(value + currentEUR);
                     break;
-
+                case 3 :
+                    double currentPLN = accountTo.getBalancePLN();
+                    accountTo.setBalancePLN(value + currentPLN);
+                    break;
             }
         }
-
-
 
         operationHistoryRepository.save(operation);
         return "redirect:all";
