@@ -2,14 +2,14 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
-    <title>Register new currency</title>
+    <title>Register new Category</title>
 </head>
 <body>
-<form:form method="post" modelAttribute="currency">
+<form:form method="post" modelAttribute="category">
     <div>
-        <label for="currency">Currency</label>
-        <form:input path="currency" id="currency" type="text"/>
-        <form:errors path="currency"/>
+        <label for="category">Category</label>
+        <form:input path="name" id="category" type="text"/>
+        <form:errors path="name"/>
     </div>
     <div>
         <input type="submit">

@@ -1,9 +1,12 @@
 package bank.app;
 
+import bank.converter.AccountConverter;
+import bank.converter.CategoryConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -64,6 +67,21 @@ public class AppConfig implements WebMvcConfigurer {
         SessionLocaleResolver localeResolver = new SessionLocaleResolver();
         localeResolver.setDefaultLocale(new Locale("pl", "PL"));
         return localeResolver;
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(getAccountConverter());
+        registry.addConverter(getCategoryConverter());
+    }
+    @Bean
+    public AccountConverter getAccountConverter() {
+        return new AccountConverter();
+    }
+
+    @Bean
+    public AccountConverter getCategoryConverter() {
+        return new AccountConverter();
     }
 
 

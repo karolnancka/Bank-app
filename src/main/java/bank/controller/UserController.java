@@ -53,7 +53,7 @@ public class UserController {
         account.setBalanceEUR(0);
         account.setBalancePLN(0);
         if (validationResult.hasErrors()) {
-            return "users/register";
+            return "users/registerUser";
         }
 
         userRepository.save(user);

@@ -22,12 +22,12 @@
     <c:forEach items="${operations}" var="operation">
         <tr>
             <td><c:out value="${operation.id}"/></td>
-            <td><c:out value="${operation.operationType}"/></td>
-            <td><c:out value="${operation.fromAccount}"/></td>
-            <td><c:out value="${operation.toAccount}"/></td>
+            <td><c:out value="${operation.operationType.name}"/></td>
+            <td><c:out value="${operation.fromAccount.number}"/></td>
+            <td><c:out value="${operation.toAccount.number}"/></td>
             <td><c:out value="${operation.amount}"/></td>
-            <td><c:out value="${operation.currencyFrom}"/></td>
-            <td><c:out value="${operation.currencyTo}"/></td>
+            <td><c:out value="${operation.currencyFrom.currency}"/></td>
+            <td><c:out value="${operation.currencyTo.currency}"/></td>
             <td><c:out value="${operation.commissionUSD}"/></td>
             <td><c:out value="${operation.commissionEUR}"/></td>
             <td><c:out value="${operation.commissionPLN}"/></td>

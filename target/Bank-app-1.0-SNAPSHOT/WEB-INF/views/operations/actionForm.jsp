@@ -9,42 +9,30 @@
 <form:form method="post" modelAttribute="operation">
     <div>
         <label>Operation Type</label>
-        <select name="category" >
-            <c:forEach items="${categories}" var="category">
-                <option value="${category.id}">${category.name}</option>
-            </c:forEach>
-        </select>
+        <form:select itemValue="id" itemLabel="name" path="operationType.id" items="${categories}"/>
     </div>
     <div>
         <label>Account From</label>
-        <select name="fromAccount" >
-            <c:forEach items="${accounts}" var="account">
-                <option value="${account}">${account.user.firstName}</option>
-            </c:forEach>
-        </select>
+        <form:select itemValue="id" itemLabel="user.firstName" path="fromAccount.id" items="${accounts}"/>
     </div>
     <div>
         <label>Account To</label>
-        <select name="toAccount" >
-            <c:forEach items="${accounts}" var="account">
-                <option value="${account}">${account.user.firstName}</option>
-            </c:forEach>
-        </select>
+        <form:select itemValue="id" itemLabel="user.firstName" path="toAccount.id" items="${accounts}"/>
     </div>
+
     <div>
         <label for="amount">Amount</label>
         <form:input path="amount" id="amount" type="number"/>
         <form:errors path="amount"/>
     </div>
     <div>
-        <label for="currencyFrom">Base Currency</label>
-        <form:input path="currencyFrom" id="currencyFrom" type="text"/>
-        <form:errors path="currencyFrom"/>
+
+        <label>Base Currency</label>
+        <form:select itemValue="id" itemLabel="currency" path="currencyFrom.id" items="${currencies}"/>
     </div>
     <div>
-        <label for="currencyTo">To Currency</label>
-        <form:input path="currencyTo" id="currencyTo" type="text"/>
-        <form:errors path="currencyTo"/>
+        <label>To Currency</label>
+        <form:select itemValue="id" itemLabel="currency" path="currencyTo.id" items="${currencies}"/>
     </div>
     <div>
         <input type="submit">
