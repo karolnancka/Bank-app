@@ -13,11 +13,11 @@
     </div>
     <div>
         <label>Account From</label>
-        <form:select itemValue="id" itemLabel="user.firstName" path="fromAccount.id" items="${accounts}"/>
+        <form:select itemValue="id" itemLabel="id" path="fromAccount.id" items="${accounts}"/>
     </div>
     <div>
         <label>Account To</label>
-        <form:select itemValue="id" itemLabel="user.firstName" path="toAccount.id" items="${accounts}"/>
+        <form:select itemValue="id" itemLabel="id" path="toAccount.id" items="${accounts}"/>
     </div>
 
     <div>
