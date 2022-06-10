@@ -9,7 +9,6 @@
     <thead>
     <th>ID</th>
     <th>Account Number</th>
-    <th>User</th>
     <th>Balance USD</th>
     <th>Balance EUR</th>
     <th>Balance PLN</th>
@@ -19,7 +18,6 @@
         <tr>
             <td><c:out value="${account.id}"/></td>
             <td><c:out value="${account.number}"/></td>
-            <td><c:out value="${account.user.firstName}  ${account.user.lastName}"/></td>
             <td><c:out value="${account.balanceUSD}"/></td>
             <td><c:out value="${account.balanceEUR}"/></td>
             <td><c:out value="${account.balancePLN}"/></td>

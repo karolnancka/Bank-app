@@ -9,17 +9,13 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private long number;
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
     private double balanceUSD;
     private double balanceEUR;
     private double balancePLN;
 
-    public Account(long id, long number, User user, double balanceUSD, double balanceEUR, double balancePLN) {
+    public Account(long id, long number, double balanceUSD, double balanceEUR, double balancePLN) {
         this.id = id;
         this.number = number;
-        this.user = user;
         this.balanceUSD = balanceUSD;
         this.balanceEUR = balanceEUR;
         this.balancePLN = balancePLN;
@@ -41,14 +37,6 @@ public class Account {
 
     public void setNumber(long number) {
         this.number = number;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public double getBalanceUSD() {
@@ -80,7 +68,6 @@ public class Account {
         return "Account{" +
                 "id=" + id +
                 ", number=" + number +
-                ", user=" + user +
                 ", balanceUSD=" + balanceUSD +
                 ", balanceEUR=" + balanceEUR +
                 ", balancePLN=" + balancePLN +

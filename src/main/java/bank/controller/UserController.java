@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -49,7 +50,6 @@ public class UserController {
         long number = (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
         userRepository.save(user);
         account.setNumber(number);
-        account.setUser(user);
         account.setBalanceUSD(0);
         account.setBalanceEUR(0);
         account.setBalancePLN(0);
@@ -82,15 +82,18 @@ public class UserController {
             return "users/edit";
         }
         userRepository.save(user);
-        return "redirect:/users/all";
+        return "/users/allUsers";
     }
 
     @GetMapping("/delete/{id}")
+    @Transactional
     public String deleteById(@PathVariable long id, Model model) {
+        User user = userRepository.getOne(id);
+        accountRepository.deleteById(user.getAccount().getId());
+        userRepository.deleteById(id);
         List<User> users = userRepository.findAll();
         model.addAttribute("users", users);
-        userRepository.deleteById(id);
 
-        return "users/allUsers";
+        return "/users/allUsers";
     }
 }
