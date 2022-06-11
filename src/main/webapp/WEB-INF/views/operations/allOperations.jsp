@@ -34,6 +34,10 @@
         </tr>
     </c:forEach>
     </tbody>
+
 </table>
+<div>
+    <a class="block"  href="<%= request.getContextPath()%>../accounts/all">All accounts balance</a>
+</div>
 </body>
 </html>
