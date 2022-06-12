@@ -3,7 +3,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>Register new user</title>
+    <title>Make an operation</title>
+    <link rel="stylesheet" href="../../../resources/css/styles.css">
 </head>
 <body>
 <form:form method="post" modelAttribute="operation">

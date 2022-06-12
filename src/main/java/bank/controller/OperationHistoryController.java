@@ -73,6 +73,7 @@ public class OperationHistoryController {
         double commissionEUR = commissionRepository.getOne((long) currencyFrom).getCommissionRate();
         double commissionPLN = commissionRepository.getOne((long) currencyFrom).getCommissionRate();
 
+        
         //transfer
         if (operationType.getId() == 1) {
             switch (currencyFrom) {
@@ -110,7 +111,7 @@ public class OperationHistoryController {
         // EUR -> PLN
         // PLN -> USD
         // PLN -> EUR
-        if (operationType.getId() == 1 && currencyFrom == 1 && currencyTo == 2) {
+        else if (operationType.getId() == 1 && currencyFrom == 1 && currencyTo == 2) {
 
             double exchangeRateUsdEur = 0.95;
             double currentUSDFrom = accountFrom.getBalanceUSD();
@@ -174,40 +175,100 @@ public class OperationHistoryController {
 
 
         //deposit
-        if (operationType.getId() == 2) {
+        else if (operationType.getId() == 2) {
             switch (currencyFrom) {
                 case 1 -> {
                     double currentUSD = accountTo.getBalanceUSD();
                     accountTo.setBalanceUSD(value + currentUSD);
+                    operation.setFromAccount(accountTo);
                 }
                 case 2 -> {
                     double currentEUR = accountTo.getBalanceEUR();
                     accountTo.setBalanceEUR(value + currentEUR);
+                    operation.setFromAccount(accountTo);
                 }
                 case 3 -> {
                     double currentPLN = accountTo.getBalancePLN();
                     accountTo.setBalancePLN(value + currentPLN);
+                    operation.setFromAccount(accountTo);
                 }
             }
         }
 
         //withdrawal
-        if (operationType.getId() == 3) {
+        else if (operationType.getId() == 3) {
             switch (currencyFrom) {
                 case 1 -> {
-                    double currentUSD = accountTo.getBalanceUSD();
-                    accountTo.setBalanceUSD(currentUSD - value);
+                    double currentUSD = accountFrom.getBalanceUSD();
+                    accountFrom.setBalanceUSD(currentUSD - value);
+                    operation.setToAccount(accountFrom);
                 }
                 case 2 -> {
-                    double currentEUR = accountTo.getBalanceEUR();
-                    accountTo.setBalanceEUR(currentEUR - value);
+                    double currentEUR = accountFrom.getBalanceEUR();
+                    accountFrom.setBalanceEUR(currentEUR - value);
+                    operation.setToAccount(accountFrom);
                 }
                 case 3 -> {
-                    double currentPLN = accountTo.getBalancePLN();
-                    accountTo.setBalancePLN(currentPLN - value);
+                    double currentPLN = accountFrom.getBalancePLN();
+                    accountFrom.setBalancePLN(currentPLN - value);
+                    operation.setToAccount(accountFrom);
                 }
             }
         }
+
+        //exchange
+        else if (operationType.getId() == 4 && currencyFrom == 1 && currencyTo == 2) {
+            double exchangeRateUsdEur = 0.95;
+            double currentUSD = accountFrom.getBalanceUSD();
+            double currentEUR = accountFrom.getBalanceEUR();
+            operation.setToAccount(accountFrom);
+            accountFrom.setBalanceUSD(currentUSD - value - (value * commissionUSD));
+            accountFrom.setBalanceEUR(currentEUR + value * exchangeRateUsdEur);
+            operation.setCommissionUSD(value * commissionUSD);
+
+        } else if (operationType.getId() == 4 && currencyFrom == 1 && currencyTo == 3) {
+            double exchangeRateUsdPln = 4.38;
+            double currentUSD = accountFrom.getBalanceUSD();
+            double currentPLN = accountFrom.getBalancePLN();
+            operation.setFromAccount(accountTo);
+            accountFrom.setBalanceUSD(currentUSD - value - (value * commissionUSD));
+            accountFrom.setBalancePLN(currentPLN + value * exchangeRateUsdPln);
+            operation.setCommissionUSD(value * commissionUSD);
+
+        } else if (operationType.getId() == 4 && currencyFrom == 2 && currencyTo == 1) {
+            double exchangeRateEurUsd = 1 / 0.95;
+            double currentUSD = accountFrom.getBalanceUSD();
+            double currentEUR = accountFrom.getBalanceEUR();
+            operation.setFromAccount(accountTo);
+            accountFrom.setBalanceEUR(currentEUR - value - (value * commissionEUR));
+            accountFrom.setBalanceUSD(currentUSD + value * exchangeRateEurUsd);
+
+        } else if (operationType.getId() == 4 && currencyFrom == 3 && currencyTo == 1) {
+            double exchangeRatePlnUsd = 1 / 4.38;
+            double currentUSD = accountFrom.getBalanceUSD();
+            double currentPLN = accountFrom.getBalancePLN();
+            operation.setFromAccount(accountTo);
+            accountFrom.setBalancePLN(currentPLN - value - (value * commissionPLN));
+            accountFrom.setBalanceUSD(currentUSD + value * exchangeRatePlnUsd);
+
+        }   else if (operationType.getId() == 4 && currencyFrom == 2 && currencyTo == 3) {
+            double exchangeRateEurPln = 4.61;
+            double currentEUR = accountFrom.getBalanceEUR();
+            double currentPLN = accountFrom.getBalancePLN();
+            operation.setFromAccount(accountTo);
+            accountFrom.setBalanceEUR(currentEUR - value - (value * commissionEUR));
+            accountFrom.setBalancePLN(currentPLN + value * exchangeRateEurPln);
+
+        } else if (operationType.getId() == 4 && currencyFrom == 3 && currencyTo == 2) {
+            double exchangeRatePlnEur = 1 / 4.61;
+            double currentPLN = accountFrom.getBalancePLN();
+            double currentEUR = accountFrom.getBalanceEUR();
+            operation.setFromAccount(accountTo);
+            accountFrom.setBalancePLN(currentPLN - value - (value * commissionPLN));
+            accountFrom.setBalanceEUR(currentEUR + value * exchangeRatePlnEur);
+
+        }
+
 
         operationHistoryRepository.save(operation);
         return "redirect:all";
