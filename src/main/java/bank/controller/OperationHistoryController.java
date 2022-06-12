@@ -68,41 +68,10 @@ public class OperationHistoryController {
         double value = operation.getAmount();
         Category operationType = operation.getOperationType();
         int currencyFrom = (int) operation.getCurrencyFrom().getId();
-        int currencyTo = (int) operation.getCurrencyFrom().getId();
-        double commissionUSD = commissionRepository.getOne((long) currencyFrom).getCommissionRate();
-        double commissionEUR = commissionRepository.getOne((long) currencyFrom).getCommissionRate();
-        double commissionPLN = commissionRepository.getOne((long) currencyFrom).getCommissionRate();
-
-        
-        //transfer
-        if (operationType.getId() == 1) {
-            switch (currencyFrom) {
-                case 1 -> {
-
-                    double currentUSDFrom = accountFrom.getBalanceUSD();
-                    accountFrom.setBalanceUSD(currentUSDFrom - value);
-                    double currentUSDTo = accountTo.getBalanceUSD();
-                    accountTo.setBalanceUSD(value + currentUSDTo);
-                    operation.setCommissionUSD(value * commissionUSD);
-                }
-                case 2 -> {
-
-                    double currentEURFrom = accountFrom.getBalanceEUR();
-                    accountFrom.setBalanceEUR(currentEURFrom - value);
-                    double currentEURTo = accountTo.getBalanceEUR();
-                    accountTo.setBalanceEUR(value + currentEURTo);
-                    operation.setCommissionEUR(value * commissionEUR);
-                }
-                case 3 -> {
-
-                    double currentPLNFrom = accountFrom.getBalancePLN();
-                    accountFrom.setBalancePLN(currentPLNFrom - value);
-                    double currentPLNTo = accountTo.getBalancePLN();
-                    accountTo.setBalancePLN(value + currentPLNTo);
-                    operation.setCommissionPLN(value * commissionPLN);
-                }
-            }
-        }
+        int currencyTo = (int) operation.getCurrencyTo().getId();
+        double commissionUSD = commissionRepository.getOne(1L).getCommissionRate();
+        double commissionEUR = commissionRepository.getOne(2L).getCommissionRate();
+        double commissionPLN = commissionRepository.getOne(3L).getCommissionRate();
 
         //ExchangeTransfer
         // USD -> EUR
@@ -111,7 +80,9 @@ public class OperationHistoryController {
         // EUR -> PLN
         // PLN -> USD
         // PLN -> EUR
-        else if (operationType.getId() == 1 && currencyFrom == 1 && currencyTo == 2) {
+
+
+        if (operationType.getId() == 1 && currencyFrom == 1 && currencyTo == 2) {
 
             double exchangeRateUsdEur = 0.95;
             double currentUSDFrom = accountFrom.getBalanceUSD();
@@ -172,6 +143,37 @@ public class OperationHistoryController {
 
 
         }
+        
+        //transfer
+        else if (operationType.getId() == 1) {
+            switch (currencyFrom) {
+                case 1 -> {
+
+                    double currentUSDFrom = accountFrom.getBalanceUSD();
+                    accountFrom.setBalanceUSD(currentUSDFrom - value);
+                    double currentUSDTo = accountTo.getBalanceUSD();
+                    accountTo.setBalanceUSD(value + currentUSDTo);
+                    operation.setCommissionUSD(value * commissionUSD);
+                }
+                case 2 -> {
+
+                    double currentEURFrom = accountFrom.getBalanceEUR();
+                    accountFrom.setBalanceEUR(currentEURFrom - value);
+                    double currentEURTo = accountTo.getBalanceEUR();
+                    accountTo.setBalanceEUR(value + currentEURTo);
+                    operation.setCommissionEUR(value * commissionEUR);
+                }
+                case 3 -> {
+
+                    double currentPLNFrom = accountFrom.getBalancePLN();
+                    accountFrom.setBalancePLN(currentPLNFrom - value);
+                    double currentPLNTo = accountTo.getBalancePLN();
+                    accountTo.setBalancePLN(value + currentPLNTo);
+                    operation.setCommissionPLN(value * commissionPLN);
+                }
+            }
+        }
+
 
 
         //deposit
@@ -218,12 +220,12 @@ public class OperationHistoryController {
 
         //exchange
         else if (operationType.getId() == 4 && currencyFrom == 1 && currencyTo == 2) {
+            double currentEUR = accountFrom.getBalanceEUR();
             double exchangeRateUsdEur = 0.95;
             double currentUSD = accountFrom.getBalanceUSD();
-            double currentEUR = accountFrom.getBalanceEUR();
             operation.setToAccount(accountFrom);
             accountFrom.setBalanceUSD(currentUSD - value - (value * commissionUSD));
-            accountFrom.setBalanceEUR(currentEUR + value * exchangeRateUsdEur);
+            accountTo.setBalanceEUR(currentEUR + value * exchangeRateUsdEur);
             operation.setCommissionUSD(value * commissionUSD);
 
         } else if (operationType.getId() == 4 && currencyFrom == 1 && currencyTo == 3) {

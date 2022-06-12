@@ -23,7 +23,7 @@
 
     <div>
         <label for="amount">Amount</label>
-        <form:input path="amount" id="amount" type="number"/>
+        <form:input path="amount" id="amount" type="text"/>
         <form:errors path="amount"/>
     </div>
     <div>
