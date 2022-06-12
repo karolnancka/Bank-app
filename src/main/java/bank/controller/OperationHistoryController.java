@@ -2,14 +2,17 @@ package bank.controller;
 
 import bank.model.*;
 import bank.repository.*;
+import org.jboss.logging.Message;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Controller
@@ -149,11 +152,14 @@ public class OperationHistoryController {
             switch (currencyFrom) {
                 case 1 -> {
 
-                    double currentUSDFrom = accountFrom.getBalanceUSD();
-                    accountFrom.setBalanceUSD(currentUSDFrom - value);
-                    double currentUSDTo = accountTo.getBalanceUSD();
-                    accountTo.setBalanceUSD(value + currentUSDTo);
-                    operation.setCommissionUSD(value * commissionUSD);
+
+                    if (accountFrom.getBalanceUSD() <= value + (value*commissionUSD)){
+                        double currentUSDFrom = accountFrom.getBalanceUSD();
+                        accountFrom.setBalanceUSD(currentUSDFrom - value);
+                        double currentUSDTo = accountTo.getBalanceUSD();
+                        accountTo.setBalanceUSD(value + currentUSDTo);
+                        operation.setCommissionUSD(value * commissionUSD);
+                    }
                 }
                 case 2 -> {
 

@@ -1,6 +1,7 @@
 package bank.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.NotNull;
 
 
