@@ -67,5 +67,6 @@
 
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/operations.js"></script>
+
 </body>
 </html>

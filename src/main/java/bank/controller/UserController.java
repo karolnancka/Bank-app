@@ -4,6 +4,7 @@ package bank.controller;
 import bank.model.Account;
 import bank.model.User;
 import bank.repository.AccountRepository;
+import bank.repository.OperationHistoryRepository;
 import bank.repository.UserRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,10 +26,12 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
+    private final OperationHistoryRepository operationHistoryRepository;
 
-    public UserController(UserRepository userRepository, AccountRepository accountRepository) {
+    public UserController(UserRepository userRepository, AccountRepository accountRepository, OperationHistoryRepository operationHistoryRepository) {
         this.userRepository = userRepository;
         this.accountRepository = accountRepository;
+        this.operationHistoryRepository = operationHistoryRepository;
     }
 
     @GetMapping("/all")
@@ -89,6 +92,7 @@ public class UserController {
     @Transactional
     public String deleteById(@PathVariable long id, Model model) {
         User user = userRepository.getOne(id);
+
         accountRepository.deleteById(user.getAccount().getId());
         userRepository.deleteById(id);
         List<User> users = userRepository.findAll();

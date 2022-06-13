@@ -1,5 +1,8 @@
 package bank.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -13,6 +16,7 @@ public class User {
     private String email;
     private String password;
     @OneToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Account account;
 
     public User(long id, String firstName, String lastName, String email, String password, Account account) {

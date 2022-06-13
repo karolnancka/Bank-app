@@ -1,5 +1,8 @@
 package bank.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.NotNull;
@@ -11,21 +14,23 @@ public class OperationHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @ManyToOne
-    @JoinColumn(name = "operation_Type")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Category operationType;
     @ManyToOne
-    @JoinColumn(name = "from_account")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Account fromAccount;
     @ManyToOne
-    @JoinColumn(name = "to_account")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Account toAccount;
     @NotNull(message = "Operation amount can not be 0")
     private double amount;
     @NotNull
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Currency currencyFrom;
     @NotNull
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Currency currencyTo;
     private double commissionUSD;
     private double commissionEUR;
