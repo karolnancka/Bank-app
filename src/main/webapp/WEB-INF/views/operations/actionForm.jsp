@@ -44,22 +44,22 @@
 
 <div class="rates">
     <div class="usdEurRate">
-        USD to EUR: <c:out value="${usdEur}"/>
+        USD to EUR: <c:out value="${rates.usdToEur}"/>
     </div>
     <div class="eurUsdRate">
-        EUR to USD:
+        EUR to USD: <c:out value="${rates.eurToUsd}"/>
     </div>
     <div class="usdPlnRate">
-        USD to PLN:
+        USD to PLN: <c:out value="${rates.usdToPln}"/>
     </div>
     <div class="plnUsdRate">
-        PLN to USD:
+        PLN to USD: <c:out value="${rates.plnToUsd}"/>
     </div>
     <div class="eurPlnRate">
-        EUR to PLN:
+        EUR to PLN: <c:out value="${rates.eurToPln}"/>
     </div>
     <div class="plnEurRate">
-        PLN to EUR:
+        PLN to EUR: <c:out value="${rates.plnToEur}"/>
     </div>
 
 

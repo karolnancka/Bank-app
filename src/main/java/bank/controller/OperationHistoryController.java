@@ -2,21 +2,14 @@ package bank.controller;
 
 import bank.model.*;
 import bank.repository.*;
-import org.jboss.logging.Message;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.transaction.Transactional;
-import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -29,8 +22,9 @@ public class OperationHistoryController {
     private final CurrencyRepository currencyRepository;
     private final UserRepository userRepository;
     private final CommissionRepository commissionRepository;
+    private final ExchangeRateRepository exchangeRateRepository;
 
-    public OperationHistoryController(OperationHistoryRepository operationHistoryRepository, CategoryRepository categoryRepository, AccountRepository accountRepository, CurrencyRepository currencyRepository, UserRepository userRepository, CommissionRepository commissionRepository) {
+    public OperationHistoryController(OperationHistoryRepository operationHistoryRepository, CategoryRepository categoryRepository, AccountRepository accountRepository, CurrencyRepository currencyRepository, UserRepository userRepository, CommissionRepository commissionRepository, ExchangeRateRepository exchangeRateRepository) {
         this.operationHistoryRepository = operationHistoryRepository;
 
         this.categoryRepository = categoryRepository;
@@ -38,6 +32,7 @@ public class OperationHistoryController {
         this.currencyRepository = currencyRepository;
         this.userRepository = userRepository;
         this.commissionRepository = commissionRepository;
+        this.exchangeRateRepository = exchangeRateRepository;
     }
 
     @GetMapping("/all")
@@ -48,6 +43,7 @@ public class OperationHistoryController {
     }
 
     @GetMapping("/operation")
+    @Transactional
     public String getTransactionForm(Model model) {
 
         List<Category> categories = categoryRepository.findAll();
@@ -60,23 +56,7 @@ public class OperationHistoryController {
         model.addAttribute("currencies", currencies);
         model.addAttribute("operation", new OperationHistory());
 
-
-
-        //Rates from URL
-        final String usdEurURL = "https://www.google.com/search?q=usd+to+eur&oq=usd+to+eur&aqs=chrome..69i57j0i433i512j0i512l8.3480j1j7&sourceid=chrome&ie=UTF-8";
-        try {
-            final Document document = Jsoup.connect(usdEurURL).get();
-            final String ticker = document.select("span.SwHCTb.DFlfde").text();
-            final String rateUsdEur = ticker.replace(",", ".");
-            final double usdEur = Double.parseDouble(rateUsdEur);
-            System.out.println(usdEur);
-            model.addAttribute("usdEur", ticker);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-
+        model.addAttribute("rates", new ExchangeRate(exchangeRateRepository.getOne(1L).getId(), exchangeRateRepository.getOne(1L).getUsdToEur(), exchangeRateRepository.getOne(1L).getEurToUsd(), exchangeRateRepository.getOne(1L).getUsdToPln(),exchangeRateRepository.getOne(1L).getPlnToUsd(),exchangeRateRepository.getOne(1L).getEurToPln(),exchangeRateRepository.getOne(1L).getPlnToEur(), exchangeRateRepository.getOne(1L).getDate()));
 
         return "operations/actionForm";
     }
