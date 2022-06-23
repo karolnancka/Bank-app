@@ -3,6 +3,9 @@ package bank.controller;
 import bank.model.*;
 import bank.repository.*;
 import org.jboss.logging.Message;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -57,6 +61,23 @@ public class OperationHistoryController {
         model.addAttribute("operation", new OperationHistory());
 
 
+
+        //Rates from URL
+        final String usdEurURL = "https://www.google.com/search?q=usd+to+eur&oq=usd+to+eur&aqs=chrome..69i57j0i433i512j0i512l8.3480j1j7&sourceid=chrome&ie=UTF-8";
+        try {
+            final Document document = Jsoup.connect(usdEurURL).get();
+            final String ticker = document.select("span.SwHCTb.DFlfde").text();
+            final String rateUsdEur = ticker.replace(",", ".");
+            final double usdEur = Double.parseDouble(rateUsdEur);
+            System.out.println(usdEur);
+            model.addAttribute("usdEur", ticker);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+
         return "operations/actionForm";
     }
 
@@ -66,6 +87,8 @@ public class OperationHistoryController {
         if (validationResult.hasErrors()) {
             return "operations/actionForm";
         }
+
+
         Account accountFrom = accountRepository.getOne(operation.getFromAccount().getId());
         Account accountTo = accountRepository.getOne(operation.getToAccount().getId());
         double value = operation.getAmount();
@@ -75,6 +98,10 @@ public class OperationHistoryController {
         double commissionUSD = commissionRepository.getOne(1L).getCommissionRate();
         double commissionEUR = commissionRepository.getOne(2L).getCommissionRate();
         double commissionPLN = commissionRepository.getOne(3L).getCommissionRate();
+
+
+
+
 
         //ExchangeTransfer
         // USD -> EUR
@@ -87,99 +114,135 @@ public class OperationHistoryController {
 
         if (operationType.getId() == 1 && currencyFrom == 1 && currencyTo == 2) {
 
-            double exchangeRateUsdEur = 0.95;
             double currentUSDFrom = accountFrom.getBalanceUSD();
-            accountFrom.setBalanceUSD(currentUSDFrom - (value * commissionUSD) - value);
-            double currentEURTo = accountTo.getBalanceEUR();
-            accountTo.setBalanceEUR(value * exchangeRateUsdEur + currentEURTo);
-            operation.setCommissionUSD(value * commissionUSD);
+            double exchangeRateUsdEur = 0.95;
+
+            if (currentUSDFrom >= value + value * commissionUSD) {
+                accountFrom.setBalanceUSD(currentUSDFrom - (value * commissionUSD) - value);
+                double currentEURTo = accountTo.getBalanceEUR();
+                accountTo.setBalanceEUR(value * exchangeRateUsdEur + currentEURTo);
+                operation.setCommissionUSD(value * commissionUSD);
+            } else {
+                return "operations/notEnoughFunds";
+            }
 
 
         } else if (operationType.getId() == 1 && currencyFrom == 1 && currencyTo == 3) {
 
             double exchangeRateUsdPln = 4.38;
             double currentUSDFrom = accountFrom.getBalanceUSD();
-            accountFrom.setBalanceUSD(currentUSDFrom - (value * commissionUSD) - value);
-            double currentPLNTo = accountTo.getBalancePLN();
-            accountTo.setBalancePLN(value * exchangeRateUsdPln + currentPLNTo);
-            operation.setCommissionUSD(value * commissionUSD);
+
+            if (currentUSDFrom >= value + value * commissionUSD) {
+                accountFrom.setBalanceUSD(currentUSDFrom - (value * commissionUSD) - value);
+                double currentPLNTo = accountTo.getBalancePLN();
+                accountTo.setBalancePLN(value * exchangeRateUsdPln + currentPLNTo);
+                operation.setCommissionUSD(value * commissionUSD);
+            } else {
+                return "operations/notEnoughFunds";
+            }
 
 
         } else if (operationType.getId() == 1 && currencyFrom == 2 && currencyTo == 1) {
 
             double exchangeRateEurUsd = 1 / 0.95;
             double currentEURFrom = accountFrom.getBalanceEUR();
-            accountFrom.setBalanceEUR(currentEURFrom - (value * commissionEUR) - value);
-            double currentUSDTo = accountTo.getBalanceUSD();
-            accountTo.setBalanceUSD(value * exchangeRateEurUsd + currentUSDTo);
-            operation.setCommissionEUR(value * commissionEUR);
+
+            if (currentEURFrom >= value + value * commissionEUR) {
+                accountFrom.setBalanceEUR(currentEURFrom - (value * commissionEUR) - value);
+                double currentUSDTo = accountTo.getBalanceUSD();
+                accountTo.setBalanceUSD(value * exchangeRateEurUsd + currentUSDTo);
+                operation.setCommissionEUR(value * commissionEUR);
+            } else {
+                return "operations/notEnoughFunds";
+            }
 
 
         } else if (operationType.getId() == 1 && currencyFrom == 2 && currencyTo == 3) {
 
             double exchangeRateEurPln = 4.61;
             double currentEURFrom = accountFrom.getBalanceEUR();
-            accountFrom.setBalanceEUR(currentEURFrom - (value * commissionEUR) - value);
-            double currentPLNTo = accountTo.getBalancePLN();
-            accountTo.setBalancePLN(value * exchangeRateEurPln + currentPLNTo);
-            operation.setCommissionEUR(value * commissionEUR);
+
+            if (currentEURFrom >= value + value * commissionEUR) {
+                accountFrom.setBalanceEUR(currentEURFrom - (value * commissionEUR) - value);
+                double currentPLNTo = accountTo.getBalancePLN();
+                accountTo.setBalancePLN(value * exchangeRateEurPln + currentPLNTo);
+                operation.setCommissionEUR(value * commissionEUR);
+            } else {
+                return "operations/notEnoughFunds";
+            }
 
 
         } else if (operationType.getId() == 1 && currencyFrom == 3 && currencyTo == 1) {
 
             double exchangeRatePlnUsd = 1 / 4.38;
             double currentPLNFrom = accountFrom.getBalancePLN();
-            accountFrom.setBalancePLN(currentPLNFrom - (value * commissionPLN) - value);
-            double currentUSDTo = accountTo.getBalanceUSD();
-            accountTo.setBalanceUSD(value * exchangeRatePlnUsd + currentUSDTo);
-            operation.setCommissionPLN(value * commissionPLN);
+
+            if (currentPLNFrom >= value + value * commissionPLN) {
+                accountFrom.setBalancePLN(currentPLNFrom - (value * commissionPLN) - value);
+                double currentUSDTo = accountTo.getBalanceUSD();
+                accountTo.setBalanceUSD(value * exchangeRatePlnUsd + currentUSDTo);
+                operation.setCommissionPLN(value * commissionPLN);
+            } else {
+                return "operations/notEnoughFunds";
+            }
 
 
         } else if (operationType.getId() == 1 && currencyFrom == 3 && currencyTo == 2) {
 
             double exchangeRatePlnEur = 1 / 4.61;
             double currentPLNFrom = accountFrom.getBalancePLN();
-            accountFrom.setBalancePLN(currentPLNFrom - (value * commissionPLN) - value);
-            double currentEURTo = accountTo.getBalanceEUR();
-            accountTo.setBalanceEUR(value * exchangeRatePlnEur + currentEURTo);
-            operation.setCommissionPLN(value * commissionPLN);
+
+            if (currentPLNFrom >= value + value * commissionPLN) {
+                accountFrom.setBalancePLN(currentPLNFrom - (value * commissionPLN) - value);
+                double currentEURTo = accountTo.getBalanceEUR();
+                accountTo.setBalanceEUR(value * exchangeRatePlnEur + currentEURTo);
+                operation.setCommissionPLN(value * commissionPLN);
+            } else {
+                return "operations/notEnoughFunds";
+            }
 
 
         }
-        
+
         //transfer
         else if (operationType.getId() == 1) {
             switch (currencyFrom) {
                 case 1 -> {
-
-
-                    if (accountFrom.getBalanceUSD() <= value + (value*commissionUSD)){
-                        double currentUSDFrom = accountFrom.getBalanceUSD();
+                    double currentUSDFrom = accountFrom.getBalanceUSD();
+                    if (currentUSDFrom >= value + (value * commissionUSD)) {
                         accountFrom.setBalanceUSD(currentUSDFrom - value);
                         double currentUSDTo = accountTo.getBalanceUSD();
                         accountTo.setBalanceUSD(value + currentUSDTo);
                         operation.setCommissionUSD(value * commissionUSD);
+                    } else {
+                        return "operations/notEnoughFunds";
                     }
                 }
                 case 2 -> {
-
                     double currentEURFrom = accountFrom.getBalanceEUR();
-                    accountFrom.setBalanceEUR(currentEURFrom - value);
-                    double currentEURTo = accountTo.getBalanceEUR();
-                    accountTo.setBalanceEUR(value + currentEURTo);
-                    operation.setCommissionEUR(value * commissionEUR);
+                    if (currentEURFrom >= value + value * commissionEUR) {
+                        accountFrom.setBalanceEUR(currentEURFrom - value);
+                        double currentEURTo = accountTo.getBalanceEUR();
+                        accountTo.setBalanceEUR(value + currentEURTo);
+                        operation.setCommissionEUR(value * commissionEUR);
+                    } else {
+                        return "operations/notEnoughFunds";
+                    }
                 }
                 case 3 -> {
 
                     double currentPLNFrom = accountFrom.getBalancePLN();
-                    accountFrom.setBalancePLN(currentPLNFrom - value);
-                    double currentPLNTo = accountTo.getBalancePLN();
-                    accountTo.setBalancePLN(value + currentPLNTo);
-                    operation.setCommissionPLN(value * commissionPLN);
+                    if (currentPLNFrom >= value + value * commissionPLN) {
+                        accountFrom.setBalancePLN(currentPLNFrom - value);
+                        double currentPLNTo = accountTo.getBalancePLN();
+                        accountTo.setBalancePLN(value + currentPLNTo);
+                        operation.setCommissionPLN(value * commissionPLN);
+                    } else {
+                        return "operations/notEnoughFunds";
+                    }
                 }
             }
         }
-
 
 
         //deposit
@@ -207,73 +270,116 @@ public class OperationHistoryController {
         else if (operationType.getId() == 3) {
             switch (currencyFrom) {
                 case 1 -> {
-                    double currentUSD = accountFrom.getBalanceUSD();
-                    accountFrom.setBalanceUSD(currentUSD - value);
-                    operation.setToAccount(accountFrom);
+                    if (accountFrom.getBalanceUSD() >= value) {
+                        double currentUSD = accountFrom.getBalanceUSD();
+                        accountFrom.setBalanceUSD(currentUSD - value);
+                        operation.setToAccount(accountFrom);
+                    } else {
+                        return "operations/notEnoughFunds";
+                    }
                 }
                 case 2 -> {
-                    double currentEUR = accountFrom.getBalanceEUR();
-                    accountFrom.setBalanceEUR(currentEUR - value);
-                    operation.setToAccount(accountFrom);
+                    if (accountFrom.getBalanceEUR() >= value) {
+                        double currentEUR = accountFrom.getBalanceEUR();
+                        accountFrom.setBalanceEUR(currentEUR - value);
+                        operation.setToAccount(accountFrom);
+                    } else {
+                        return "operations/notEnoughFunds";
+                    }
                 }
                 case 3 -> {
-                    double currentPLN = accountFrom.getBalancePLN();
-                    accountFrom.setBalancePLN(currentPLN - value);
-                    operation.setToAccount(accountFrom);
+                    if (accountFrom.getBalancePLN() >= value) {
+                        double currentPLN = accountFrom.getBalancePLN();
+                        accountFrom.setBalancePLN(currentPLN - value);
+                        operation.setToAccount(accountFrom);
+                    } else {
+                        return "operations/notEnoughFunds";
+                    }
                 }
             }
         }
 
         //exchange
         else if (operationType.getId() == 4 && currencyFrom == 1 && currencyTo == 2) {
+
             double currentEUR = accountFrom.getBalanceEUR();
             double exchangeRateUsdEur = 0.95;
             double currentUSD = accountFrom.getBalanceUSD();
-            operation.setToAccount(accountFrom);
-            accountFrom.setBalanceUSD(currentUSD - value - (value * commissionUSD));
-            accountTo.setBalanceEUR(currentEUR + value * exchangeRateUsdEur);
-            operation.setCommissionUSD(value * commissionUSD);
+
+            if (currentUSD >= value + value * commissionUSD) {
+                operation.setToAccount(accountFrom);
+                accountFrom.setBalanceUSD(currentUSD - value - (value * commissionUSD));
+                accountTo.setBalanceEUR(currentEUR + value * exchangeRateUsdEur);
+                operation.setCommissionUSD(value * commissionUSD);
+            } else {
+                return "operations/notEnoughFunds";
+            }
 
         } else if (operationType.getId() == 4 && currencyFrom == 1 && currencyTo == 3) {
             double exchangeRateUsdPln = 4.38;
             double currentUSD = accountFrom.getBalanceUSD();
             double currentPLN = accountFrom.getBalancePLN();
-            operation.setFromAccount(accountTo);
-            accountFrom.setBalanceUSD(currentUSD - value - (value * commissionUSD));
-            accountFrom.setBalancePLN(currentPLN + value * exchangeRateUsdPln);
-            operation.setCommissionUSD(value * commissionUSD);
+
+            if (currentUSD >= value + value * commissionUSD) {
+                operation.setFromAccount(accountTo);
+                accountFrom.setBalanceUSD(currentUSD - value - (value * commissionUSD));
+                accountFrom.setBalancePLN(currentPLN + value * exchangeRateUsdPln);
+                operation.setCommissionUSD(value * commissionUSD);
+            } else {
+                return "operations/notEnoughFunds";
+            }
 
         } else if (operationType.getId() == 4 && currencyFrom == 2 && currencyTo == 1) {
             double exchangeRateEurUsd = 1 / 0.95;
             double currentUSD = accountFrom.getBalanceUSD();
             double currentEUR = accountFrom.getBalanceEUR();
-            operation.setFromAccount(accountTo);
-            accountFrom.setBalanceEUR(currentEUR - value - (value * commissionEUR));
-            accountFrom.setBalanceUSD(currentUSD + value * exchangeRateEurUsd);
+
+            if (currentEUR >= value + value * commissionEUR) {
+                operation.setFromAccount(accountTo);
+                accountFrom.setBalanceEUR(currentEUR - value - (value * commissionEUR));
+                accountFrom.setBalanceUSD(currentUSD + value * exchangeRateEurUsd);
+            } else {
+                return "operations/notEnoughFunds";
+            }
 
         } else if (operationType.getId() == 4 && currencyFrom == 3 && currencyTo == 1) {
             double exchangeRatePlnUsd = 1 / 4.38;
             double currentUSD = accountFrom.getBalanceUSD();
             double currentPLN = accountFrom.getBalancePLN();
-            operation.setFromAccount(accountTo);
-            accountFrom.setBalancePLN(currentPLN - value - (value * commissionPLN));
-            accountFrom.setBalanceUSD(currentUSD + value * exchangeRatePlnUsd);
 
-        }   else if (operationType.getId() == 4 && currencyFrom == 2 && currencyTo == 3) {
+            if (currentPLN >= value + value * commissionPLN) {
+                operation.setFromAccount(accountTo);
+                accountFrom.setBalancePLN(currentPLN - value - (value * commissionPLN));
+                accountFrom.setBalanceUSD(currentUSD + value * exchangeRatePlnUsd);
+            } else {
+                return "operations/notEnoughFunds";
+            }
+
+        } else if (operationType.getId() == 4 && currencyFrom == 2 && currencyTo == 3) {
             double exchangeRateEurPln = 4.61;
             double currentEUR = accountFrom.getBalanceEUR();
             double currentPLN = accountFrom.getBalancePLN();
-            operation.setFromAccount(accountTo);
-            accountFrom.setBalanceEUR(currentEUR - value - (value * commissionEUR));
-            accountFrom.setBalancePLN(currentPLN + value * exchangeRateEurPln);
+
+            if (currentEUR >= value + value * commissionEUR) {
+                operation.setFromAccount(accountTo);
+                accountFrom.setBalanceEUR(currentEUR - value - (value * commissionEUR));
+                accountFrom.setBalancePLN(currentPLN + value * exchangeRateEurPln);
+            } else {
+                return "operations/notEnoughFunds";
+            }
 
         } else if (operationType.getId() == 4 && currencyFrom == 3 && currencyTo == 2) {
             double exchangeRatePlnEur = 1 / 4.61;
             double currentPLN = accountFrom.getBalancePLN();
             double currentEUR = accountFrom.getBalanceEUR();
-            operation.setFromAccount(accountTo);
-            accountFrom.setBalancePLN(currentPLN - value - (value * commissionPLN));
-            accountFrom.setBalanceEUR(currentEUR + value * exchangeRatePlnEur);
+
+            if (currentPLN >= value + value * commissionPLN) {
+                operation.setFromAccount(accountTo);
+                accountFrom.setBalancePLN(currentPLN - value - (value * commissionPLN));
+                accountFrom.setBalanceEUR(currentEUR + value * exchangeRatePlnEur);
+            } else {
+                return "operations/notEnoughFunds";
+            }
 
         }
 

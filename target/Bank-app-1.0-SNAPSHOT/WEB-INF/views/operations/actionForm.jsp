@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<form:form method="post" modelAttribute="operation">
+<form:form method="post" autocomplete="off" modelAttribute="operation">
     <div>
         <label>Operation Type</label>
         <form:select itemValue="id" itemLabel="name" path="operationType.id" items="${categories}"/>
@@ -44,7 +44,7 @@
 
 <div class="rates">
     <div class="usdEurRate">
-        USD to EUR:
+        USD to EUR: <c:out value="${usdEur}"/>
     </div>
     <div class="eurUsdRate">
         EUR to USD:

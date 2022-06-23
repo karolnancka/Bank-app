@@ -5,7 +5,7 @@
     <title>Register new Commission</title>
 </head>
 <body>
-<form:form method="post" modelAttribute="commission">
+<form:form method="post"  modelAttribute="commission">
     <div>
         <label for="commission">Commission Currency</label>
         <form:input path="commissionName" id="commission" type="text"/>
