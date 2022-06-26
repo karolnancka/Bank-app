@@ -9,6 +9,10 @@
 
 <div>
     <a class="block"  href="<%= request.getContextPath()%>../accounts/all">All accounts balance</a>
+</div><br>
+
+<div>
+    <a class="block" href="<%= request.getContextPath()%>..//">Back to homepage</a>
 </div>
 
 </body>

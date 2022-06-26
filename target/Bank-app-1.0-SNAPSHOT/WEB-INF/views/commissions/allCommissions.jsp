@@ -21,6 +21,10 @@
         </tr>
     </c:forEach>
     </tbody>
-</table>
+</table><br>
+
+<div>
+    <a class="block" href="<%= request.getContextPath()%>..//">Back to homepage</a>
+</div>
 </body>
 </html>

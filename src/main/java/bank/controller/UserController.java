@@ -85,7 +85,7 @@ public class UserController {
             return "users/edit";
         }
         userRepository.save(user);
-        return "/users/allUsers";
+        return "redirect:all";
     }
 
     @GetMapping("/delete/{id}")

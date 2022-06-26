@@ -75,12 +75,17 @@ public class OperationHistoryController {
         Category operationType = operation.getOperationType();
         int currencyFrom = (int) operation.getCurrencyFrom().getId();
         int currencyTo = (int) operation.getCurrencyTo().getId();
+
         double commissionUSD = commissionRepository.getOne(1L).getCommissionRate();
         double commissionEUR = commissionRepository.getOne(2L).getCommissionRate();
         double commissionPLN = commissionRepository.getOne(3L).getCommissionRate();
 
-
-
+        double exchangeRateUsdEur = exchangeRateRepository.getOne(1L).getUsdToEur();
+        double exchangeRateUsdPln = exchangeRateRepository.getOne(1L).getUsdToPln();
+        double exchangeRateEurUsd = exchangeRateRepository.getOne(1L).getEurToUsd();
+        double exchangeRateEurPln = exchangeRateRepository.getOne(1L).getEurToPln();
+        double exchangeRatePlnUsd = exchangeRateRepository.getOne(1L).getPlnToUsd();
+        double exchangeRatePlnEur = exchangeRateRepository.getOne(1L).getPlnToEur();
 
 
         //ExchangeTransfer
@@ -95,8 +100,6 @@ public class OperationHistoryController {
         if (operationType.getId() == 1 && currencyFrom == 1 && currencyTo == 2) {
 
             double currentUSDFrom = accountFrom.getBalanceUSD();
-            double exchangeRateUsdEur = 0.95;
-
             if (currentUSDFrom >= value + value * commissionUSD) {
                 accountFrom.setBalanceUSD(currentUSDFrom - (value * commissionUSD) - value);
                 double currentEURTo = accountTo.getBalanceEUR();
@@ -109,9 +112,7 @@ public class OperationHistoryController {
 
         } else if (operationType.getId() == 1 && currencyFrom == 1 && currencyTo == 3) {
 
-            double exchangeRateUsdPln = 4.38;
             double currentUSDFrom = accountFrom.getBalanceUSD();
-
             if (currentUSDFrom >= value + value * commissionUSD) {
                 accountFrom.setBalanceUSD(currentUSDFrom - (value * commissionUSD) - value);
                 double currentPLNTo = accountTo.getBalancePLN();
@@ -124,7 +125,6 @@ public class OperationHistoryController {
 
         } else if (operationType.getId() == 1 && currencyFrom == 2 && currencyTo == 1) {
 
-            double exchangeRateEurUsd = 1 / 0.95;
             double currentEURFrom = accountFrom.getBalanceEUR();
 
             if (currentEURFrom >= value + value * commissionEUR) {
@@ -139,7 +139,6 @@ public class OperationHistoryController {
 
         } else if (operationType.getId() == 1 && currencyFrom == 2 && currencyTo == 3) {
 
-            double exchangeRateEurPln = 4.61;
             double currentEURFrom = accountFrom.getBalanceEUR();
 
             if (currentEURFrom >= value + value * commissionEUR) {
@@ -154,7 +153,7 @@ public class OperationHistoryController {
 
         } else if (operationType.getId() == 1 && currencyFrom == 3 && currencyTo == 1) {
 
-            double exchangeRatePlnUsd = 1 / 4.38;
+
             double currentPLNFrom = accountFrom.getBalancePLN();
 
             if (currentPLNFrom >= value + value * commissionPLN) {
@@ -169,7 +168,6 @@ public class OperationHistoryController {
 
         } else if (operationType.getId() == 1 && currencyFrom == 3 && currencyTo == 2) {
 
-            double exchangeRatePlnEur = 1 / 4.61;
             double currentPLNFrom = accountFrom.getBalancePLN();
 
             if (currentPLNFrom >= value + value * commissionPLN) {
@@ -283,7 +281,6 @@ public class OperationHistoryController {
         else if (operationType.getId() == 4 && currencyFrom == 1 && currencyTo == 2) {
 
             double currentEUR = accountFrom.getBalanceEUR();
-            double exchangeRateUsdEur = 0.95;
             double currentUSD = accountFrom.getBalanceUSD();
 
             if (currentUSD >= value + value * commissionUSD) {
@@ -296,7 +293,7 @@ public class OperationHistoryController {
             }
 
         } else if (operationType.getId() == 4 && currencyFrom == 1 && currencyTo == 3) {
-            double exchangeRateUsdPln = 4.38;
+
             double currentUSD = accountFrom.getBalanceUSD();
             double currentPLN = accountFrom.getBalancePLN();
 
@@ -310,7 +307,7 @@ public class OperationHistoryController {
             }
 
         } else if (operationType.getId() == 4 && currencyFrom == 2 && currencyTo == 1) {
-            double exchangeRateEurUsd = 1 / 0.95;
+
             double currentUSD = accountFrom.getBalanceUSD();
             double currentEUR = accountFrom.getBalanceEUR();
 
@@ -323,7 +320,7 @@ public class OperationHistoryController {
             }
 
         } else if (operationType.getId() == 4 && currencyFrom == 3 && currencyTo == 1) {
-            double exchangeRatePlnUsd = 1 / 4.38;
+
             double currentUSD = accountFrom.getBalanceUSD();
             double currentPLN = accountFrom.getBalancePLN();
 
@@ -336,7 +333,7 @@ public class OperationHistoryController {
             }
 
         } else if (operationType.getId() == 4 && currencyFrom == 2 && currencyTo == 3) {
-            double exchangeRateEurPln = 4.61;
+
             double currentEUR = accountFrom.getBalanceEUR();
             double currentPLN = accountFrom.getBalancePLN();
 
@@ -349,7 +346,7 @@ public class OperationHistoryController {
             }
 
         } else if (operationType.getId() == 4 && currencyFrom == 3 && currencyTo == 2) {
-            double exchangeRatePlnEur = 1 / 4.61;
+
             double currentPLN = accountFrom.getBalancePLN();
             double currentEUR = accountFrom.getBalanceEUR();
 

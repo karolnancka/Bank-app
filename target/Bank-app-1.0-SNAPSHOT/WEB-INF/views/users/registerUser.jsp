@@ -18,7 +18,7 @@
     </div>
     <div>
         <label for="email">Email</label>
-        <form:input path="email" id="email" type="text"/>
+        <form:input path="email" id="email" type="email"/>
         <form:errors path="email"/>
     </div>
     <div>
@@ -30,6 +30,10 @@
         <input type="submit">
     </div>
     <form:errors path="*"/>
-</form:form>
+</form:form><br>
+
+<div>
+    <a class="block" href="<%= request.getContextPath()%>..//">Back to homepage</a>
+</div>
 </body>
 </html>

@@ -15,6 +15,10 @@
         <input type="submit">
     </div>
     <form:errors path="*"/>
-</form:form>
+</form:form><br>
+
+<div>
+    <a class="block" href="<%= request.getContextPath()%>..//">Back to homepage</a>
+</div>
 </body>
 </html>

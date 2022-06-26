@@ -41,6 +41,9 @@
     </div>
     <form:errors path="*"/>
 </form:form>
+<div>
+    <a class="block"  href="<%= request.getContextPath()%>../accounts/all">All accounts balance</a>
+</div><br>
 
 <div class="rates">
     <div class="usdEurRate">
@@ -61,8 +64,17 @@
     <div class="plnEurRate">
         PLN to EUR: <c:out value="${rates.plnToEur}"/>
     </div>
+    <div class="date">
+        Rates from: <c:out value="${rates.date}"/>
+    </div><br>
+    <div>
+        Check and refresh current rates here: <a class="block" href="<%= request.getContextPath()%>../exchangeRate/all">Exchange Rates from Google</a>
+    </div>
 
+</div><br>
 
+<div>
+    <a class="block" href="<%= request.getContextPath()%>..//">Back to homepage</a>
 </div>
 
 
